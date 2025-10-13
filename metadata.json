@@ -1,0 +1,5 @@
+{
+  "name": "P2P ECC Authentication Simulator",
+  "description": "A web-based simulator demonstrating anonymous, certificate-free P2P authentication and key agreement using Elliptic Curve Cryptography (ECC) and Elliptic Curve Diffie-Hellman (ECDH).",
+  "requestFramePermissions": []
+}
