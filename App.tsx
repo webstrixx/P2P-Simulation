@@ -15,6 +15,7 @@ import {
 } from './services/cryptoService';
 import { ArrowRightLeftIcon } from './components/icons';
 import { LogsPage } from './components/LogsPage';
+import { AesPlaygroundPage } from './components/AesPlaygroundPage';
 
 const initialState: PeerState = {
   pseudoId: '',
@@ -39,7 +40,7 @@ const App: React.FC = () => {
   const [peerB, setPeerB] = useState<PeerState>({ ...initialState });
   const [step, setStep] = useState<SimulationStep>('initial');
   const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [view, setView] = useState<'simulation' | 'logs'>('simulation');
+  const [view, setView] = useState<'simulation' | 'logs' | 'aes-playground'>('simulation');
   const messageCounter = useRef(0);
 
   const addLog = useCallback((message: string, type: 'info' | 'success' | 'error' | 'system' = 'info') => {
@@ -219,11 +220,10 @@ const App: React.FC = () => {
     setPeerB(p => ({ ...p, messages: [...p.messages, newMessage] }));
   };
 
-
-  return (
-    <div className="min-h-screen font-sans antialiased">
-      <main>
-        {view === 'simulation' ? (
+  const renderContent = () => {
+    switch(view) {
+      case 'simulation':
+        return (
           <div className="container mx-auto p-4 md:p-8">
             <Header />
             <Controls
@@ -233,6 +233,7 @@ const App: React.FC = () => {
               onGenerateSecret={handleGenerateSecret}
               onReset={handleReset}
               onNavigateToLogs={() => setView('logs')}
+              onNavigateToPlayground={() => setView('aes-playground')}
               onRefreshKeys={handleRefreshKeys}
             />
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start relative">
@@ -245,12 +246,29 @@ const App: React.FC = () => {
               <PeerPanel name="Peer B" state={peerB} onSendMessage={(content) => handleSendMessage('B', content)} isChannelSecure={step === 'secret_derived'} />
             </div>
           </div>
-        ) : (
+        );
+      case 'logs':
+        return (
           <LogsPage
             logs={logs}
             onNavigateBack={() => setView('simulation')}
           />
-        )}
+        );
+      case 'aes-playground':
+        return (
+            <AesPlaygroundPage
+              sharedSecret={peerA.sharedSecret}
+              simulationMessages={peerA.messages}
+              onNavigateBack={() => setView('simulation')}
+            />
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen font-sans antialiased">
+      <main>
+        {renderContent()}
       </main>
     </div>
   );

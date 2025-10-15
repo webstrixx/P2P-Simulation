@@ -1,7 +1,6 @@
-
 import React from 'react';
 import type { SimulationStep } from '../types';
-import { ClipboardDocumentListIcon, ArrowPathIcon, ClockIcon } from './icons';
+import { ClipboardDocumentListIcon, ArrowPathIcon, ClockIcon, BeakerIcon } from './icons';
 
 interface ControlsProps {
   step: SimulationStep;
@@ -10,6 +9,7 @@ interface ControlsProps {
   onGenerateSecret: () => void;
   onReset: () => void;
   onNavigateToLogs: () => void;
+  onNavigateToPlayground: () => void;
   onRefreshKeys: () => void;
 }
 
@@ -32,12 +32,12 @@ const StepButton: React.FC<{ onClick: () => void; disabled: boolean; children: R
 };
 
 
-export const Controls: React.FC<ControlsProps> = ({ step, onInitialize, onShareKeys, onGenerateSecret, onReset, onNavigateToLogs, onRefreshKeys }) => {
+export const Controls: React.FC<ControlsProps> = ({ step, onInitialize, onShareKeys, onGenerateSecret, onReset, onNavigateToLogs, onNavigateToPlayground, onRefreshKeys }) => {
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <h3 className="text-xl font-semibold">Simulation Steps</h3>
-             <div className="flex items-center gap-2">
+             <div className="flex items-center flex-wrap gap-2">
                 <button
                     onClick={onRefreshKeys}
                     disabled={step !== 'secret_derived'}
@@ -45,6 +45,14 @@ export const Controls: React.FC<ControlsProps> = ({ step, onInitialize, onShareK
                 >
                     <ClockIcon className="h-5 w-5"/>
                     <span>Refresh Session</span>
+                </button>
+                 <button
+                    onClick={onNavigateToPlayground}
+                    disabled={step !== 'secret_derived'}
+                    className="flex items-center space-x-2 bg-slate-600 hover:bg-slate-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <BeakerIcon className="h-5 w-5"/>
+                    <span>AES Playground</span>
                 </button>
                 <button
                     onClick={onNavigateToLogs}

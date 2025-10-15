@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const KeyIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -89,5 +88,11 @@ export const ArrowUturnLeftIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export const ClockIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
+export const BeakerIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.21 1.002L7.5 15.25m5.25 0L14.49 9.82a2.25 2.25 0 00-.21-1.002V3.104m-3.75 0h3.75M3 15.25h18M3 15.25a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5zm18 0a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM3.75 19.5h16.5a.75.75 0 00.75-.75V15.75a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v3a.75.75 0 00.75.75z" />
     </svg>
 );
