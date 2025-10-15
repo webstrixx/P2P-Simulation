@@ -1,4 +1,3 @@
-
 export type SimulationStep = 'initial' | 'initialized' | 'keys_exchanged' | 'secret_derived';
 
 export interface Message {
@@ -18,6 +17,7 @@ export interface PeerState {
   receivedPublicKeyJwk: JsonWebKey | null;
   sharedSecret: CryptoKey | null;
   messages: Message[];
+  encryptionAlgorithm: string | null;
 }
 
 export interface LogEntry {

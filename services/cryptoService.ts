@@ -1,11 +1,10 @@
-
 const ECC_ALGORITHM = {
   name: 'ECDH',
   namedCurve: 'P-256',
 };
 
-const ENCRYPTION_ALGORITHM = 'AES-GCM';
-const ENCRYPTION_KEY_LENGTH = 256;
+export const ENCRYPTION_ALGORITHM = 'AES-GCM';
+export const ENCRYPTION_KEY_LENGTH = 256;
 
 /**
  * Generates an Elliptic Curve Cryptography (ECC) key pair for ECDH.

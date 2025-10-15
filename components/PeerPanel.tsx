@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { PeerState, Message } from '../types';
 import { KeyIcon, UserCircleIcon, LockClosedIcon, PaperAirplaneIcon, ShieldCheckIcon } from './icons';
@@ -91,6 +90,13 @@ export const PeerPanel: React.FC<PeerPanelProps> = ({ name, state, onSendMessage
           <div className="flex-1">
             <p className="text-sm font-medium text-slate-400">ECDH Shared Secret</p>
             <p className="text-xs font-mono break-all">{state.sharedSecret ? <span className="text-green-400">Successfully Derived & Secured</span> : <span className="text-slate-500">Not derived</span>}</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <ShieldCheckIcon className="h-6 w-6 text-cyan-400" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-slate-400">Encryption Algorithm</p>
+            <p className="text-sm font-mono break-all">{state.encryptionAlgorithm ? <span className="text-cyan-400">{state.encryptionAlgorithm}</span> : <span className="text-slate-500">N/A</span>}</p>
           </div>
         </div>
       </div>

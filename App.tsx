@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useRef } from 'react';
 import { PeerPanel } from './components/PeerPanel';
 import { Header } from './components/Header';
@@ -10,7 +9,9 @@ import {
   importJwkToPublicKey, 
   deriveSharedSecret, 
   encryptMessage, 
-  decryptMessage 
+  decryptMessage,
+  ENCRYPTION_ALGORITHM,
+  ENCRYPTION_KEY_LENGTH
 } from './services/cryptoService';
 import { ArrowRightLeftIcon } from './components/icons';
 import { LogsPage } from './components/LogsPage';
@@ -22,6 +23,7 @@ const initialState: PeerState = {
   receivedPublicKeyJwk: null,
   sharedSecret: null,
   messages: [],
+  encryptionAlgorithm: null,
 };
 
 // FIX: Add a browser-compatible function to convert ArrayBuffer to hex string,
@@ -106,12 +108,14 @@ const App: React.FC = () => {
         throw new Error("Derived secrets do not match!");
       }
 
-      setPeerA(prev => ({...prev, sharedSecret: secretA}));
-      setPeerB(prev => ({...prev, sharedSecret: secretB}));
+      const encryptionAlgorithm = `${ENCRYPTION_ALGORITHM}-${ENCRYPTION_KEY_LENGTH}`;
+
+      setPeerA(prev => ({...prev, sharedSecret: secretA, encryptionAlgorithm}));
+      setPeerB(prev => ({...prev, sharedSecret: secretB, encryptionAlgorithm}));
 
       addLog('Peer A derived shared secret.', 'success');
       addLog('Peer B derived shared secret.', 'success');
-      addLog('Shared secrets match! Secure channel established.', 'success');
+      addLog(`Shared secrets match! Secure channel established with ${encryptionAlgorithm}.`, 'success');
       setStep('secret_derived');
 
     } catch (error) {
@@ -152,6 +156,8 @@ const App: React.FC = () => {
         if (bufferToHex(exportedSecretA) !== bufferToHex(exportedSecretB)) {
             throw new Error("Derived secrets for the new session do not match!");
         }
+        
+        const encryptionAlgorithm = `${ENCRYPTION_ALGORITHM}-${ENCRYPTION_KEY_LENGTH}`;
 
         setPeerA(prev => ({ 
             ...prev,
@@ -160,6 +166,7 @@ const App: React.FC = () => {
             publicKeyJwk: newJwkA,
             receivedPublicKeyJwk: receivedKeyForA,
             sharedSecret: newSecretA,
+            encryptionAlgorithm,
         }));
         setPeerB(prev => ({
             ...prev,
@@ -168,9 +175,10 @@ const App: React.FC = () => {
             publicKeyJwk: newJwkB,
             receivedPublicKeyJwk: receivedKeyForB,
             sharedSecret: newSecretB,
+            encryptionAlgorithm,
         }));
 
-        addLog('New shared secrets match! Session key successfully refreshed.', 'success');
+        addLog(`New shared secrets match! Session key successfully refreshed with ${encryptionAlgorithm}.`, 'success');
         
     } catch (error) {
         addLog(`Error during key refresh: ${(error as Error).message}`, 'error');
@@ -181,7 +189,7 @@ const App: React.FC = () => {
     const senderPeer = sender === 'A' ? peerA : peerB;
     const receiverPeer = sender === 'A' ? peerB : peerA;
 
-    if (!senderPeer.sharedSecret || !receiverPeer.sharedSecret) {
+    if (!senderPeer.sharedSecret || !receiverPeer.sharedSecret || !senderPeer.encryptionAlgorithm) {
       addLog('Cannot send message: Shared secret not established.', 'error');
       return;
     }
@@ -189,13 +197,13 @@ const App: React.FC = () => {
     messageCounter.current++;
     const messageId = messageCounter.current;
     
-    addLog(`Peer ${sender} is encrypting message: "${content}"`, 'info');
+    addLog(`Peer ${sender} is encrypting message with ${senderPeer.encryptionAlgorithm}: "${content}"`, 'info');
     const { ciphertext, iv } = await encryptMessage(senderPeer.sharedSecret, content);
     
     addLog(`Message encrypted. Transmitting to Peer ${sender === 'A' ? 'B' : 'A'}.`, 'system');
 
     const decryptedContent = await decryptMessage(receiverPeer.sharedSecret, { ciphertext, iv });
-    addLog(`Peer ${sender === 'A' ? 'B' : 'A'} received and decrypted message.`, 'success');
+    addLog(`Peer ${sender === 'A' ? 'B' : 'A'} received and decrypted message with ${senderPeer.encryptionAlgorithm}.`, 'success');
     
     const newMessage: Message = {
       id: messageId,
